@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.viewpager2.widget.ViewPager2
 import com.lee.rest.beachcongestionpj.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import okhttp3.ResponseBody
@@ -35,6 +36,25 @@ class MainActivity : AppCompatActivity() {
         binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
         binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
         binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)
+
+        /**
+         * 현재 viewpager 상태 값 확인 후 신호등 표시
+         */
+        binding.beachList.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                nowPosition = position
+                congestionCheck(inbeachList[nowPosition].congestion)
+            }
+        })
     }
 
     override fun onResume() {
@@ -71,10 +91,6 @@ class MainActivity : AppCompatActivity() {
                                     adapter = BeachAdapter(inbeachList)
                                     communicationAdapter = adapter as BeachAdapter
                                     settingImageClick(adapter as BeachAdapter, inbeachList) // 클릭이벤트 설정
-
-                                    /*congestionCheck((adapter as BeachAdapter).getPosition()) // 혼잡도 체크하여 신호 반영
-                                    println((adapter as BeachAdapter).getPosition())*/
-
                                 }catch (e:Exception){ }
                             }
                             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -89,18 +105,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        var userAction = event?.action
-        when(userAction){
-            MotionEvent.ACTION_DOWN -> {
-                congestionCheck(communicationAdapter.getPosition())
-                println("변하는중 ${communicationAdapter.getPosition()}")
-            }
-        }
-        return super.dispatchTouchEvent(event)
-    }
-
     /**
      * 이미지 클릭시 구글맵 띄우는 함수
      */
@@ -121,8 +125,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * 혼잡도 확인하여 신호 반영 함수
      */
-    private fun congestionCheck(position: Int){
-        when (inbeachList[position].congestion) {
+    private fun congestionCheck(congestion: String){
+        when (congestion) {
             "1" -> {
                 binding.greenLight.setColorFilter(Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN)
                 binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
