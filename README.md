@@ -10,8 +10,12 @@
 ------------
 ### 설계
 #### 1. 핵심 변수, 함수  
-  - 
-    
+  - openApi의 각 해수욕장 저장용 data class
+  
+         data class BeachInfo( var congestion: String, var etlDt: String, var poiNm: String, var seqId: Int, var uniqPop: Int )        
+      
+  - coroutineCallRetrofit() : 코루틴을 동작시켜 open api를 읽어오고 변환 및 처리 함수
+  
 #### 2. 동작 방식
   - activity에 retroft2를 통해 정보 저장 및 adpter로 전달
   - adapter를 통해 viewpager2활용 해수욕장 정보 제공, 터치 이벤트 설정
