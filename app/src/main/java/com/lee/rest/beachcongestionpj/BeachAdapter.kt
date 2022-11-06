@@ -1,5 +1,6 @@
 package com.lee.rest.beachcongestionpj
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +20,11 @@ class BeachAdapter(private val beaches: List<BeachInfo>) : RecyclerView.Adapter<
             , parent, false)
         return BeachViewHolder(binding)
     }
-    override fun onBindViewHolder(holder: BeachViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BeachViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val beach = beaches[position]
         holder.binding.name.text = beach.poiNm
-
+        thisPosition = position
+        println("지금 위치는 $thisPosition")
         //Glide.with(holder.itemView.context).load("""$TARGET_ADDRESS${movie.poiNm}""").into(holder.binding.imageview)
         // 이미지 클릭 이벤트 만들기
         holder.itemView.setOnClickListener{
@@ -36,7 +38,9 @@ class BeachAdapter(private val beaches: List<BeachInfo>) : RecyclerView.Adapter<
     override fun getItemCount(): Int {
         return beaches.size
     }
-
+    fun getPosition(): Int{
+        return thisPosition
+    }
     // 클릭 반응을 받기위한 함수들
     interface OnItemClickListener{
         fun onClick(v: View, position: Int)
