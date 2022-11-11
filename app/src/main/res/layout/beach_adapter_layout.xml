@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_margin="8dp"
     android:elevation="8dp"
     app:cardCornerRadius="8dp">
@@ -12,26 +13,73 @@
         android:id="@+id/imageview"
         android:layout_width="match_parent"
         android:scaleType="centerCrop"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/beach_picture"
+        android:layout_gravity="top"
         />
-
-    <TextView
-        android:id="@+id/name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-        tools:text="@tools:sample/full_names"
-        android:background="#D3FFFFFF"
-        android:padding="8dp"
-        android:lines="1"
-        android:maxLines="1"
         android:layout_gravity="bottom"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            tools:text="@tools:sample/full_names"
+            android:background="#D3FFFFFF"
+            android:padding="8dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            tools:text="@tools:sample/full_names"
+            android:background="#D3FFFFFF"
+            android:padding="8dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        <TextView
+            android:id="@+id/usingday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            tools:text="@tools:sample/full_names"
+            android:background="#D3FFFFFF"
+            android:padding="8dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        <TextView
+            android:id="@+id/usingPeopleNum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            tools:text="@tools:sample/full_names"
+            android:background="#D3FFFFFF"
+            android:padding="8dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+    </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+
+</LinearLayout>
