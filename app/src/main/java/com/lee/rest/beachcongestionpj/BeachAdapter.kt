@@ -12,8 +12,9 @@ const val TARGET_ADDRESS = "https://www.tournmaster.com/seantour_map/travel/" //
 
 class BeachViewHolder(val binding: BeachAdapterLayoutBinding) : RecyclerView.ViewHolder(binding.root)
 
-class BeachAdapter(private val beaches: List<BeachInfo>) : RecyclerView.Adapter<BeachViewHolder>() {
-    private lateinit var nowBeach : BeachInfo
+class BeachAdapter(private val beaches: List<CombineBeachInfo>) : RecyclerView.Adapter<BeachViewHolder>() {
+
+    private lateinit var nowBeach : CombineBeachInfo
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeachViewHolder {
         val binding = BeachAdapterLayoutBinding.inflate(
             LayoutInflater.from(parent.context)
@@ -23,6 +24,9 @@ class BeachAdapter(private val beaches: List<BeachInfo>) : RecyclerView.Adapter<
     override fun onBindViewHolder(holder: BeachViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val beach = beaches[position]
         holder.binding.name.text = beach.poiNm
+        holder.binding.address.text = beach.areaName + " " + beach.areaName2
+        holder.binding.usingday.text = "개장기간: " + beach.openingYmd + " ~ " + beach.closingYmd
+        holder.binding.usingPeopleNum.text = "최대 이용객: " + beach.capacity
         //Glide.with(holder.itemView.context).load("""$TARGET_ADDRESS${movie.poiNm}""").into(holder.binding.imageview)
         // 이미지 클릭 이벤트 만들기
         holder.itemView.setOnClickListener{
@@ -38,7 +42,7 @@ class BeachAdapter(private val beaches: List<BeachInfo>) : RecyclerView.Adapter<
     override fun getItemCount(): Int {
         return beaches.size
     }
-    fun getNowBeaches(): BeachInfo{
+    fun getNowBeaches(): CombineBeachInfo{
         return nowBeach
     }
     // 클릭 반응을 받기위한 함수들

@@ -15,9 +15,11 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RetrofitCoroutineService {
-
     @POST("getBeachCongestionApi.do")
     fun beachCongestion(): Call<ResponseBody>
+
+    @POST("beachinfo.do")
+    fun beachInfo(): Call<ResponseBody> // 273개
 
     companion object {
         var retrofitService: RetrofitCoroutineService? = null
@@ -31,7 +33,5 @@ interface RetrofitCoroutineService {
             }
             return retrofitService!!
         }
-
     }
-
 }
