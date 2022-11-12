@@ -1,5 +1,6 @@
 package com.lee.rest.beachcongestionpj
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -10,6 +11,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
 import com.lee.rest.beachcongestionpj.databinding.ActivityMainBinding
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private var beachInfoList = ArrayList<BeachInfo>() // json 바다 정보 저장용
     private var combineBeachList = ArrayList<CombineBeachInfo>()  // 두개 json 합친 리스트
     private var nowPosition = 0 // 현재 페이지 값
+    private var findBeach = "" // 검색어 저장용
     private lateinit var communicationAdapter: BeachAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +64,24 @@ class MainActivity : AppCompatActivity() {
             }
         })
         coroutineCallRetrofit() // retrofit 동작 함수
+
+        /**
+         * 해수욕장 검색 기능
+         */
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                //검색어가 입력되는 순간
+                return false
+            }
+            //키보드에서 검색 버튼 누를시
+            override fun onQueryTextChange(newText: String?): Boolean {
+                findBeach = newText.toString()
+                communicationAdapter.filter.filter(newText)
+                Log.e(TAG,"검색어: $findBeach")
+                return false
+            }
+        })
     }
 
     // 현재 상태 저장
