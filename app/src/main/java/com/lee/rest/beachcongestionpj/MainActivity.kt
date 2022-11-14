@@ -1,5 +1,6 @@
 package com.lee.rest.beachcongestionpj
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
@@ -22,6 +23,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     //layout 세팅
     private lateinit var binding: ActivityMainBinding
@@ -39,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.progressBar.visibility = View.VISIBLE // 로딩 보이기
         // 신호등 투명도 30%(4D)로 설정
-        binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
+        /*binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
         binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
-        binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)
+        binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)*/
 
         /**
          * 현재 viewpager 상태 값 확인 후 신호등 표시
@@ -71,10 +73,10 @@ class MainActivity : AppCompatActivity() {
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                //검색어가 입력되는 순간
+                //키보드에서 검색 버튼 누를시
                 return false
             }
-            //키보드에서 검색 버튼 누를시
+            //검색어가 입력되는 순간
             override fun onQueryTextChange(newText: String?): Boolean {
                 findBeach = newText.toString()
                 communicationAdapter.filter.filter(newText)
@@ -144,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                                 }catch (e:Exception){
                                 }
                             }
-
                             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             }
                         })
@@ -169,7 +170,6 @@ class MainActivity : AppCompatActivity() {
                                         inbeachList.add(beach)
                                     }
                                     println(inbeachList) // 내부 값들 확인
-
                                 }catch (e:Exception){ }
                                 combineBeachData()
                                 print("바다 정보")
@@ -186,11 +186,9 @@ class MainActivity : AppCompatActivity() {
                                 binding.progressBar.visibility = View.GONE
                             }
                         })
-
                     }
                 Log.e("TAG","성공")
                 binding.progressBar.visibility = View.INVISIBLE
-
             }
         }
     }
@@ -231,22 +229,24 @@ class MainActivity : AppCompatActivity() {
     /**
      * 혼잡도 확인하여 신호 반영 함수
      */
+    @SuppressLint("Deprecated")
     private fun congestionCheck(congestion: String){
         when (congestion) {
+            /*binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
+            binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
+            binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)*/
             "1" -> {
-                binding.greenLight.setColorFilter(Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN)
-                binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
-                binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)
+                //binding.greenLight.setColorFilter(Color.parseColor("#00FF00"), PorterDuff.Mode.SRC_IN)
+                binding.congestionIcon.setColorFilter(resources.getColor(R.color.green))
+                println("진입")
             }
             "2" -> {
-                binding.yellowLight.setColorFilter(Color.parseColor("#FFFF00"), PorterDuff.Mode.SRC_IN)
-                binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
-                binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
+                //binding.yellowLight.setColorFilter(Color.parseColor("#FFFF00"), PorterDuff.Mode.SRC_IN)
+                binding.congestionIcon.setColorFilter(resources.getColor(R.color.yellow))
             }
             else -> {
-                binding.redLight.setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.SRC_IN)
-                binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
-                binding.yellowLight.setColorFilter(Color.parseColor("#4DFFFF00"), PorterDuff.Mode.SRC_IN)
+                //binding.redLight.setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.SRC_IN)
+                binding.congestionIcon.setColorFilter(resources.getColor(R.color.red))
             }
         }
     }

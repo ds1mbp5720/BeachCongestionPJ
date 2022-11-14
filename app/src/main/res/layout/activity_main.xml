@@ -44,7 +44,17 @@
         android:indeterminateTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/congestionIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_groups_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/beach_list"
+        app:tint="@color/black" />
+    <!--<LinearLayout
         android:id="@+id/light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,7 +86,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/yellowoval"
             android:padding="10dp" />
-    </LinearLayout>
+    </LinearLayout>-->
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/beach_list"
@@ -84,22 +94,11 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/title"
         tools:listitem="@layout/beach_adapter_layout"
-        app:layout_constraintBottom_toBottomOf="@id/light"
+        app:layout_constraintBottom_toBottomOf="@id/congestionIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         app:layout_constraintStart_toStartOf="parent"/>
-    <TextView
-        android:id="@+id/small_memo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="사진을 누르면 지도가 나옵니다."
-        android:textSize="10dp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/beach_list"
-        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

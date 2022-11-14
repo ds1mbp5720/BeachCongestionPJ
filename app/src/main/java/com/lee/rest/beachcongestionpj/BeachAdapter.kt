@@ -31,7 +31,6 @@ class BeachAdapter(private val beaches: List<CombineBeachInfo>) : RecyclerView.A
             LayoutInflater.from(parent.context)
             , parent, false)
         filteredBeach.addAll(beaches)
-        println("필터링")
         return BeachViewHolder(binding)
     }
     override fun onBindViewHolder(holder: BeachViewHolder, @SuppressLint("RecyclerView") position: Int) {
