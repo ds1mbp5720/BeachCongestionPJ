@@ -15,6 +15,7 @@
         android:textSize="30dp"
         android:textColor="@color/black"
         android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:padding="15dp"
@@ -44,16 +45,7 @@
         android:indeterminateTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <ImageView
-        android:id="@+id/congestionIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_groups_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/beach_list"
-        app:tint="@color/black" />
+
     <!--<LinearLayout
         android:id="@+id/light"
         android:layout_width="wrap_content"
@@ -87,18 +79,32 @@
             android:src="@drawable/yellowoval"
             android:padding="10dp" />
     </LinearLayout>-->
-
+    <net.daum.mf.map.api.MapView
+        android:id="@+id/beach_map"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        app:layout_constraintBottom_toTopOf="@id/beach_list"
+        app:layout_constraintTop_toBottomOf="@id/search"
+        />
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/beach_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/beach_map"
         tools:listitem="@layout/beach_adapter_layout"
         app:layout_constraintBottom_toBottomOf="@id/congestionIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         app:layout_constraintStart_toStartOf="parent"/>
-
+    <ImageView
+        android:id="@+id/congestionIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_groups_24"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/beach_list"
+        app:tint="@color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

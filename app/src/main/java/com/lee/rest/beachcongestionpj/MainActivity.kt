@@ -3,25 +3,26 @@ package com.lee.rest.beachcongestionpj
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.util.Base64
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.SearchView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.lee.rest.beachcongestionpj.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
+import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapView
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.security.MessageDigest
+
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -39,7 +40,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater).also{
             setContentView(it.root)
         }
-        binding.progressBar.visibility = View.VISIBLE // 로딩 보이기
+        //카카오 map 연결 및 생성
+        MapSetting()
+
+        with(binding){
+            progressBar.visibility = View.VISIBLE // 로딩 보이기
+        }
         // 신호등 투명도 30%(4D)로 설정
         /*binding.redLight.setColorFilter(Color.parseColor("#4DFF0000"), PorterDuff.Mode.SRC_IN)
         binding.greenLight.setColorFilter(Color.parseColor("#4D00FF00"), PorterDuff.Mode.SRC_IN)
@@ -74,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 //키보드에서 검색 버튼 누를시
+                findBeach = ""
                 return false
             }
             //검색어가 입력되는 순간
@@ -84,8 +91,25 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         })
+        getAppKeyHash() // 키 확인
     }
+    /**
+     * 키 연결용 해쉬키 확인 함수
+     */
+    fun getAppKeyHash() {
+        try {
+            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            for (i in info.signatures) {
+                val md: MessageDigest = MessageDigest.getInstance("SHA")
+                md.update(i.toByteArray())
 
+                val something = String(Base64.encode(md.digest(), 0)!!)
+                Log.e("Debug key", something)
+            }
+        } catch (e: Exception) {
+            Log.e("Not found", e.toString())
+        }
+    }
     // 현재 상태 저장
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -215,9 +239,12 @@ class MainActivity : AppCompatActivity() {
     private fun settingImageClick(ImageClickAdapter: BeachAdapter, beaches: ArrayList<BeachCongestionInfo>){
         ImageClickAdapter.setItemClickListener(object : BeachAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
+                var checkSearch:String // 검색 구분
                 //해수욕장이름으로 구글지도 띄우는 코드
+                checkSearch = if(findBeach == ""){ beaches[position].poiNm
+                }else{ findBeach }  // 검색 여부에 따라 구글맵 이동 키워드 변경
                 val gmmIntentUri = Uri.parse("geo:37,127?q=" +
-                        Uri.encode(beaches[position].poiNm))
+                        Uri.encode(checkSearch))
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.setPackage("com.google.android.apps.maps")
                 startActivity(mapIntent)
@@ -248,6 +275,16 @@ class MainActivity : AppCompatActivity() {
                 //binding.redLight.setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.SRC_IN)
                 binding.congestionIcon.setColorFilter(resources.getColor(R.color.red))
             }
+        }
+    }
+    private fun MapSetting() {
+        with(binding) {
+            beachMap.setDaumMapApiKey(DAUM_MAPS_ANDROID_APP_API_KEY)
+            beachMap.mapType = MapView.MapType.Standard
+            beachMap.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.483433, 126.9175076), true)
+            beachMap.setZoomLevel(7, true)
+            beachMap.zoomIn(true)
+            beachMap.zoomOut(true)
         }
     }
 }
