@@ -1,13 +1,14 @@
 # BeachCongestionPJ
 ## 해수욕장 혼잡도 안내 App  
 > openAPI 활용 국내 해수욕장 혼잡도를 신호등으로 안내합니다. 이미지 클릭시 googleMap으로 해당 해수욕장 위치를 알려줍니다.   
-> 검색 기능을 추가하였습니다.('22.11.12)  
-> Kotlin, retrofit, viewpager2, 
+> 검색 기능을 추가하였습니다.('22.11.12)    
+> 카카오맵을 추가('22.11.18) 추후 해수욕장 좌표 maker 연결     
+> Kotlin, retrofit, viewpager2, kakaoMap api  
 ------------
 ### 프로젝트 목적
 + retrofit2를 활용 openApi에서 원하는 data 추출 및 활용  
 + recyclerView에 검색기능을 통한 filter 
-+ (추가 예정)사진 대신 지도 출력  
++ 사진 대신 지도 출력(카카오맵 연결) 
 + UI 연습
 ------------
 ### 주요기능
@@ -32,5 +33,8 @@
 ------------
 ### 실행사진
 ![KakaoTalk_20221106_211307764](https://user-images.githubusercontent.com/37658906/200170132-6c00cce3-7fad-4437-80ca-ad4dfeed6123.jpg)
-
+최초 ui
 ![KakaoTalk_20221112_184127516](https://user-images.githubusercontent.com/37658906/201468459-b953251a-4fcf-4117-b66a-a5f62862c8cc.jpg)
+검색 추가
+![KakaoTalk_20221118_234403716](https://user-images.githubusercontent.com/37658906/202731683-506eae66-aecb-46ab-bfca-76fc0754c1d0.jpg)
+지도추가, ui일부 변경
