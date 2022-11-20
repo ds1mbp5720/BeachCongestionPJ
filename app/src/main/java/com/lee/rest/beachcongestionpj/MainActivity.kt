@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.lee.rest.beachcongestionpj.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
+import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import okhttp3.ResponseBody
@@ -29,10 +31,12 @@ class MainActivity : AppCompatActivity() {
     //layout 세팅
     private lateinit var binding: ActivityMainBinding
     private var inbeachList = ArrayList<BeachCongestionInfo>() // json 혼잡도 정보 저장용 리스트
+    private var filteredBeachList = ArrayList<CombineBeachInfo>() // 검색 후 필터링된 바다 리스트
     private var beachInfoList = ArrayList<BeachInfo>() // json 바다 정보 저장용
     private var combineBeachList = ArrayList<CombineBeachInfo>()  // 두개 json 합친 리스트
     private var nowPosition = 0 // 현재 페이지 값
     private var findBeach = "" // 검색어 저장용
+    private lateinit var geoCoder: Geocoder
     private lateinit var communicationAdapter: BeachAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         }
         //카카오 map 연결 및 생성
         MapSetting()
+
+        geoCoder = Geocoder(this) // 주소 지도에 표시용 지오코더
 
         with(binding){
             progressBar.visibility = View.VISIBLE // 로딩 보이기
@@ -57,18 +63,13 @@ class MainActivity : AppCompatActivity() {
          * inner class로해서 ondestroy 부분에서 처리, 브로드캐스트
          * */
         binding.beachList.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 nowPosition = position
-                congestionCheck(inbeachList[nowPosition].congestion)
+                if(filteredBeachList.size>0){ // 필터링된 배열 null이 아닐시
+                    congestionCheck(filteredBeachList[nowPosition].congestion) // 검색 반영 혼잡도 출력
+                    mapFocusToBeach() // 마커, 지도 포커스 설정 함수
+                }
             }
         })
         coroutineCallRetrofit() // retrofit 동작 함수
@@ -87,6 +88,7 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 findBeach = newText.toString()
                 communicationAdapter.filter.filter(newText)
+                filteredBeachList = communicationAdapter.getFilterBeach()
                 Log.e(TAG,"검색어: $findBeach")
                 return false
             }
@@ -204,7 +206,8 @@ class MainActivity : AppCompatActivity() {
                                 println(combineBeachList)
                                 adapter = BeachAdapter(combineBeachList)
                                 communicationAdapter = adapter as BeachAdapter
-                                settingImageClick(adapter as BeachAdapter, inbeachList) // 클릭이벤트 설정
+                                filteredBeachList = communicationAdapter.getFilterBeach()
+                                settingImageClick(adapter as BeachAdapter, filteredBeachList) // 클릭이벤트 설정
                             }
                             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                                 binding.progressBar.visibility = View.GONE
@@ -236,13 +239,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * 이미지 클릭시 구글맵 띄우는 함수
      */
-    private fun settingImageClick(ImageClickAdapter: BeachAdapter, beaches: ArrayList<BeachCongestionInfo>){
+    private fun settingImageClick(ImageClickAdapter: BeachAdapter, beaches: ArrayList<CombineBeachInfo>){
         ImageClickAdapter.setItemClickListener(object : BeachAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 var checkSearch:String // 검색 구분
                 //해수욕장이름으로 구글지도 띄우는 코드
-                checkSearch = if(findBeach == ""){ beaches[position].poiNm
-                }else{ findBeach }  // 검색 여부에 따라 구글맵 이동 키워드 변경
+                checkSearch = beaches[position].poiNm
                 val gmmIntentUri = Uri.parse("geo:37,127?q=" +
                         Uri.encode(checkSearch))
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -277,14 +279,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    //카카오 지도 설정
     private fun MapSetting() {
         with(binding) {
             beachMap.setDaumMapApiKey(DAUM_MAPS_ANDROID_APP_API_KEY)
             beachMap.mapType = MapView.MapType.Standard
-            beachMap.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.483433, 126.9175076), true)
             beachMap.setZoomLevel(7, true)
             beachMap.zoomIn(true)
             beachMap.zoomOut(true)
         }
+    }
+    // 해수욕장에 따라 지도 위치 변경
+    private fun mapFocusToBeach(){
+        var marker = MapPOIItem() // 현 해수욕장 마커
+        marker.itemName = "${filteredBeachList[nowPosition].poiNm}" // 마커 터치시 나오는 이름
+        marker.markerType = MapPOIItem.MarkerType.BluePin // 마커 색
+        // 해수욕장 이름을 좌표로 바꾸는 geocoder, 현재 해수욕장 이름에 정확한 검색을 위한 단어 추가
+        var cor = geoCoder.getFromLocationName(filteredBeachList[nowPosition].poiNm + " 해수욕장",1)
+        if(cor?.isEmpty() == true){ // 해수욕장으로 안될시 해변으로
+            cor = geoCoder.getFromLocationName(filteredBeachList[nowPosition].poiNm + "해변",1)
+        }
+        println("좌표값: $cor") // 결과 확인용 출력문
+        with(binding.beachMap){
+            if(cor?.isNotEmpty() == true){ // 좌표 정상 획득시
+                setMapCenterPoint(MapPoint.mapPointWithGeoCoord(cor[0].latitude, cor[0].longitude), true)
+                marker.mapPoint =MapPoint.mapPointWithGeoCoord(cor[0].latitude, cor[0].longitude) // 마커도 해당 위치에 셋팅
+            }
+            removeAllPOIItems() // 기존 마커 제거
+            addPOIItem(marker) // 현 마커 추가
+        }
+
+
     }
 }
