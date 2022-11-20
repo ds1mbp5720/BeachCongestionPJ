@@ -57,6 +57,9 @@ class BeachAdapter(private val beaches: List<CombineBeachInfo>) : RecyclerView.A
     override fun getItemCount(): Int {
         return filteredBeach.size
     }
+    fun getFilterBeach():ArrayList<CombineBeachInfo>{ // 검색 후 새로 생성한 리스트 반환
+        return filteredBeach
+    }
     fun getNowBeaches(): CombineBeachInfo{
         return nowBeach
     }
